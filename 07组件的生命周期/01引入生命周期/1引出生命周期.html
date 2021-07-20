@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>引出生命周期</title>
+</head>
+<body>
+<!--引入js文件-->
+<!--首先引入react核心库-->
+<script src="../../js/16.8/react.development.js"></script>
+<!--在引入react扩展  引入react-dom,用于支持react操作Dom-->
+<script src="../../js/16.8/react-dom.development.js"></script>
+<!--引入babel,用于将转为js-->
+<script src="../../js/16.8/babel.min.js"></script>
+
+
+<div id="test"></div>
+<script type="text/babel">
+    /**
+      * 生命周期回调函数 <=> 生命周期钩子函数 <=> 生命周期函数 <=> 生命周期钩子
+     */
+    //创建类组件
+    class Life extends React.Component {
+        //定义状态
+        state = {opacity: 1}
+
+        forget = () => {
+
+            //卸载组件
+            ReactDOM.unmountComponentAtNode(document.getElementById('test'))
+        }
+
+        //组件挂载之后执行
+        componentDidMount() {
+            this.timer = setInterval(() => {
+                //获取原状态
+                let {opacity} = this.state
+                //减少0.1
+                opacity -= 0.1
+                if (opacity <= 0) opacity = 1
+                //更新状态
+                this.setState({opacity})
+            }, 200)
+        }
+
+        //组件将要卸载之前去执行
+        componentWillUnmount() {
+            //清楚定时器
+            clearInterval(this.timer)
+        }
+
+        //第一次挂载会执行，组件状态更新也会执行
+        render() {
+            return (
+                <div>
+                    <h3 style={{opacity: this.state.opacity}}>遇到烦恼怎么办?</h3>
+                    <button onClick={this.forget}>忘了它</button>
+                </div>
+            )
+        }
+    }
+
+    //把组件渲染到页面
+    ReactDOM.render(<Life/>, document.getElementById('test'))
+</script>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>引出生命周期</title>
+    <style>
+        .list{
+            width:200px;
+            height:150px;
+            background: aqua;
+            overflow: auto;
+        }
+        .list div{
+            height:30px;
+        }
+    </style>
+</head>
+<body>
+<!--引入js文件-->
+<!--首先引入react核心库-->
+<script src="../../js/17.0.1/react.development.js"></script>
+<!--在引入react扩展  引入react-dom,用于支持react操作Dom-->
+<script src="../../js/17.0.1/react-dom.development.js"></script>
+<!--引入babel,用于将转为js-->
+<script src="../../js/17.0.1/babel.min.js"></script>
+
+
+<div id="test"></div>
+<script type="text/babel">
+    //创建组件
+    class NesList   extends  React.Component{
+        state = {newsList:[]}
+        //组件挂载之后更新数据
+        componentDidMount () {
+           setInterval(()=>{
+
+               //1.获取原来的数据
+               let {newsList} = this.state
+               console.log(newsList.length +1)
+               //新的新闻
+               let news = '新闻' + (newsList.length +1)
+
+               this.setState({newsList: [news,...newsList]})
+
+           },1000)
+
+        }
+        //组件更新之前的钩子
+        getSnapshotBeforeUpdate(){
+            //获取组件之前的高度
+            let oldHeight = this.refs.list.scrollHeight
+            return oldHeight
+        }
+        //组件更新完毕的钩子
+        componentDidUpdate(preProps,preState,oldHeight){
+            //获取组件之后的高度
+            let newHeight =  this.refs.list.scrollHeight
+            //scrollTop 需要改变的值
+            this.refs.list.scrollTop +=  newHeight - oldHeight
+        }
+
+        render () {
+            return (
+                <div className="list" ref="list">
+                    {
+                        this.state.newsList.map((news,index)=>{
+
+                            return   <div key={index}>{news}</div>
+                        })
+                    }
+
+                </div>
+            )
+        }
+    }
+    //挂载组件到页面
+    ReactDOM.render(<NesList/>,document.getElementById('test'))
+</script>
+</body>
+</html>
